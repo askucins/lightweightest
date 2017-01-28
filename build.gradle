@@ -6,18 +6,19 @@ archivesBaseName = "lightweightest"
 project.version = "0.5"
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-  compile "org.codehaus.groovy:groovy-all:2.4.8"
-  testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"
+    compile "org.codehaus.groovy:groovy-all:2.4.8"
+    compile group: 'org.apache.ivy', name: 'ivy', version: '2.4.0'
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"
 }
 
 uploadArchives {
-  repositories {
-    mavenDeployer {
-      repository(url: "http://raw.github.com/askucins/lightweightest/master/repository/")
+    repositories {
+        mavenDeployer {
+            repository(url: "http://raw.github.com/askucins/lightweightest/master/repository/")
+        }
     }
-  }
 }
