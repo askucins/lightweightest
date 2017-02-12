@@ -1,10 +1,12 @@
 package org.lightweightest
 
+import groovy.util.logging.Slf4j
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
 @Stepwise
+@Slf4j
 class LightweightestSpec extends Specification {
     @Shared
     def server
