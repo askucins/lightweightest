@@ -1,0 +1,60 @@
+<!-- From https://gist.github.com/vazexqi/5024574 -->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Daily rollover -->
+            <fileNamePattern>logs/test.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Keep 7 days' worth of history -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.lightweightest" level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="spock.lang" level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="io.restassured" level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.apache.http" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="org.apache.http.impl.client" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="org.apache.http.wire" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="com.sun.net.httpserver.HttpServer" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="com.sun.net.httpserver.HttpHandler" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="com.sun.net.httpserver.HttpExchange" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="com.sun.net.httpserver.HttpHeaders" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
