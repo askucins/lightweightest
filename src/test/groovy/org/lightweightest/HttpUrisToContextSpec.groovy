@@ -3,10 +3,8 @@ package org.lightweightest
 import groovy.util.logging.Slf4j
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Stepwise
 import spock.lang.Unroll
 
-@Stepwise
 @Slf4j
 class HttpUrisToContextSpec extends Specification {
     @Shared
@@ -43,6 +41,30 @@ class HttpUrisToContextSpec extends Specification {
         // e.g https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/HttpServer.html
         "/x/y/z/a" || ">>x/y/z"
         "/a"       || ">>"
+    }
+
+    @Unroll
+    def "should map request URI to context paths (#uri, #response) - based on HttpServer doc"() {
+        // TODO this fails...
+        // e.g https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/HttpServer.html
+        //
+        // If I understand that docs for various paths various contexts should be created. However there is only one
+        // context created for "/" path...
+        // so we should change teh server code to actually create various contexts...
+        given:
+        server.get("/") { req, resp -> ">>" }
+        server.get("/apps") { req, resp -> ">>apps" }
+        server.get("/apps/foo") { req, resp -> ">>apps/foo" }
+
+        expect:
+        "http://localhost:9999${uri}".toURL().text == response
+
+        where:
+        uri             || response
+        "/apps/foo/bar" || ">>apps/foo"
+        "/apps/Foo/bar" || "error"
+        "/apps/app1"    || ">>apps"
+        "/foo"          || ">>"
 
 
     }
