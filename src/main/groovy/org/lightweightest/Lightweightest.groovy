@@ -26,7 +26,10 @@ class Lightweightest {
         server.createContext("/", new HttpHandler() {
             @Override
             void handle(HttpExchange exchange) throws Exception {
-                def func = methods[exchange.requestMethod][exchange.requestURI.path.toString()]
+                // based on an advice from:
+                // http://stackoverflow.com/questions/26815752/create-dynamically-contexts-for-com-sun-net-httpserver-httpserver-java
+                //def func = methods[exchange.requestMethod][exchange.requestURI.path.toString()]
+                def func = findFunc(exchange.requestMethod, exchange.requestURI.path.toString())
                 def request = new LwtRequest(exchange.requestURI, exchange.requestBody.bytes, exchange.requestHeaders)
                 requests << request
                 def response = new LwtResponse(200, exchange.getResponseHeaders())
@@ -51,6 +54,17 @@ class Lightweightest {
                 }
             }
         })
+    }
+
+    private Closure findFunc(String requestMethod, String path) {
+        def context = methods[requestMethod].keySet().findAll { String ctx ->
+            path.startsWith(ctx) }?.max { a, b -> a.size() <=> b.size() }
+        if (context == null) {
+            //TODO return 404
+            return null
+        } else {
+            return methods[requestMethod][context]
+        }
     }
 
     public void get(String str, Closure closure) {

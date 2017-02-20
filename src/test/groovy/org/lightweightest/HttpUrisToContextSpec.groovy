@@ -1,11 +1,11 @@
 package org.lightweightest
 
 import groovy.util.logging.Slf4j
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Unroll
+import spock.lang.*
 
 @Slf4j
+@Title("Mapping request URIs to HttpContext paths")
+@Narrative("e.g. https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/HttpServer.html")
 class HttpUrisToContextSpec extends Specification {
     @Shared
     Lightweightest server
@@ -16,57 +16,48 @@ class HttpUrisToContextSpec extends Specification {
     }
 
     @Unroll
-    def "should map request URI to context paths (#uri, #response)"() {
-        given:
-        server.get("/") { req, resp -> ">>" }
-        server.get("/x") { req, resp -> ">>x" }
-        server.get("/x/y") { req, resp -> ">>x/y" }
-        server.get("/x/z") { req, resp -> ">>x/z" }
-        server.get("/y") { req, resp -> ">>y" }
-        server.get("/y/z") { req, resp -> ">>y/z" }
-        server.get("/x/y/z") { req, resp -> ">>x/y/z" }
-
-        expect:
-        "http://localhost:9999${uri}".toURL().text == response
-
-        where:
-        uri        || response
-        "/x"       || ">>x"
-        "/x/y"     || ">>x/y"
-        "/x/z"     || ">>x/z"
-        "/y"       || ">>y"
-        "/y/z"     || ">>y/z"
-        "/x/y/z"   || ">>x/y/z"
-        // TODO why does it fail?
-        // e.g https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/HttpServer.html
-        "/x/y/z/a" || ">>x/y/z"
-        "/a"       || ">>"
-    }
-
-    @Unroll
     def "should map request URI to context paths (#uri, #response) - based on HttpServer doc"() {
-        // TODO this fails...
-        // e.g https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/HttpServer.html
-        //
-        // If I understand that docs for various paths various contexts should be created. However there is only one
-        // context created for "/" path...
-        // so we should change teh server code to actually create various contexts...
         given:
-        server.get("/") { req, resp -> ">>" }
-        server.get("/apps") { req, resp -> ">>apps" }
-        server.get("/apps/foo") { req, resp -> ">>apps/foo" }
+        server.get("/") { req, resp -> "ctx:/" }
+        server.get("/apps/") { req, resp -> "ctx:/apps/" }
+        server.get("/apps/foo/") { req, resp -> "ctx:/apps/foo/" }
 
         expect:
         "http://localhost:9999${uri}".toURL().text == response
 
         where:
         uri             || response
-        "/apps/foo/bar" || ">>apps/foo"
-        "/apps/Foo/bar" || "error"
-        "/apps/app1"    || ">>apps"
-        "/foo"          || ">>"
+        "/apps/foo/bar" || "ctx:/apps/foo/"
+        "/apps/app1"    || "ctx:/apps/"
+        "/foo"          || "ctx:/"
+        "/apps/Foo/bar" || "error"  //TODO this doesn't fail...
+    }
 
+    @Unroll
+    def "should map request URI to context paths (#uri, #response)"() {
+        given:
+        server.get("/") { req, resp -> "ctx:/" }
+        server.get("/x/") { req, resp -> "ctx:/x/" }
+        server.get("/x/y/") { req, resp -> "ctx:/x/y/" }
+        server.get("/x/z/") { req, resp -> "ctx:/x/z/" }
+        server.get("/y/") { req, resp -> "ctx:/y/" }
+        server.get("/y/z/") { req, resp -> "ctx:/y/z/" }
+        server.get("/x/y/z/") { req, resp -> "ctx:/x/y/z/" }
 
+        expect:
+        "http://localhost:9999${uri}".toURL().text == response
+
+        //TODO review trailing slashes
+        where:
+        uri        || response
+        "/x"       || "ctx:/x/"
+        "/x/y"     || "ctx:/x/y/"
+        "/x/z"     || "ctx:/x/z/"
+        "/y"       || "ctx:/y/"
+        "/y/z"     || "ctx:/y/z/"
+        "/x/y/z"   || "ctx:/x/y/z/"
+        "/x/y/z/a" || "ctx:/x/y/z/"
+        "/a"       || "ctx:/"
     }
 
     def cleanupSpec() {
