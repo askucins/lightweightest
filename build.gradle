@@ -31,7 +31,12 @@ uploadArchives {
     repositories {
         mavenDeployer {
             configuration = configurations.deployerJars
-            repository(url: "https://raw.github.com/askucins/lightweightest/tree/master/repository/")
+            repository(url: "https://raw.github.com/askucins/lightweightest/tree/master/repository/") {
+                authentication(
+                        userName: project.property('github.credentials.username'),
+                        password: project.property('github.credentials.password')
+                )
+            }
         }
     }
 }
