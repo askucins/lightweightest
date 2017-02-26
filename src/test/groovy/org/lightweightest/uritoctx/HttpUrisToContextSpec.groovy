@@ -1,8 +1,10 @@
-package org.lightweightest
+package org.lightweightest.uritoctx
 
 import groovy.util.logging.Slf4j
+import org.lightweightest.Lightweightest
 import spock.lang.*
 
+@IgnoreIf({!env.runjavadocspecs})
 @Slf4j
 @Title("Mapping request URIs to HttpContext paths")
 @Narrative("e.g. https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/com/sun/net/httpserver/HttpServer.html")
