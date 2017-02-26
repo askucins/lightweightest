@@ -1,5 +1,5 @@
-@GrabResolver(name = "lightweightest", m2Compatible = 'true', root = 'https://raw.github.com/askucins/lightweightest/develop/repository')
-@Grab("org.lightweightest:lightweightest:0.5.1")
+@GrabResolver(name = "lightweightest", m2Compatible = 'true', root = 'https://raw.github.com/askucins/lightweightest/master/repository')
+@Grab("org.lightweightest:lightweightest:0.6")
 import org.lightweightest.Lightweightest
 
 def server = Lightweightest.start(port: 9999, stopAfter: 1) {
